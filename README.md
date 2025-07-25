@@ -1,68 +1,80 @@
-# Personal Firewall 🚀
+# 🔥 Mini Firewall with GUI (Python + WinDivert)
 
-![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
-![License](https://img.shields.io/badge/License-MIT-green)
-![GitHub Repo stars](https://img.shields.io/github/stars/BruhhMoment123/Personal-Firewall?style=social)
-
-A **simple yet powerful Windows-based mini firewall** built using **Python**, **Tkinter**, and **WinDivert**. It features a real-time GUI for monitoring, filtering, and blocking IP and port-based network traffic.
+This is a simple Python-based GUI firewall for Windows using WinDivert. It allows you to block specific IP addresses and ports with real-time packet logging and now includes **scrollable packet logs** for easier monitoring.
 
 ---
 
-## 🔧 Features
-
-- 🔐 Block traffic from/to specific IPs or ports
-- 📊 Real-time packet logging (direction, protocol, IPs, ports)
-- 🖥️ Graphical user interface using Tkinter
-- 💾 Persistent rules saved in `rules.json`
-- 🧱 Backend powered by WinDivert via `pydivert`
-- 🛠️ Create `.exe` using PyInstaller
-
----
-
-## 📁 Project Structure
+## 📁 Folder Structure
 
 ```
-├── build/            # Auto-generated exe build files
-├── dist/             # Final executable files
-├── drivers/          # WinDivert drivers (WinDivert.dll, .sys)
-├── logs/             # Packet logs (optional)
-├── src/              # Source code (e.g., firewall.py)
-├── rules.json        # Stores user-defined firewall rules
-├── firewall.spec     # PyInstaller build spec
-└── README.md         # You're here!
+firewall/
+├── build/                  # PyInstaller build output
+├── dist/                   # Final .exe file
+├── drivers/                # WinDivert DLLs (e.g., WinDivert64.dll)
+├── src/                    # Main application source code
+│   └── firewall.py         # Main GUI + Firewall logic
+├── rules.json              # Stores blocked IPs and ports
+├── client.py               # Sample client for testing (e.g., socket connection)
+├── testserver.py           # Sample server for testing
+├── testfirewall_bypass.py  # Script for bypass attempts (for testing)
+├── firewall.spec           # PyInstaller spec file
+├── README.md
+└── LICENSE.txt             # MIT License
 ```
 
 ---
 
-## ▶️ How to Run
+## 🚀 Features
 
+- ✅ Block any IP address or port
+- ✅ Start/stop firewall easily from the GUI
+- ✅ Scrollable log window for packet events
+- ✅ Real-time packet log: direction, protocol, IPs, ports, size, status
+- ✅ Persistent rules via `rules.json`
+
+---
+
+## 📦 Requirements
+
+- **Windows**
+- **Python 3.11**
+- `pydivert`
+- `tkinter`
+
+Install dependencies:
 ```bash
 pip install pydivert
-python src/firewall.py
 ```
 
-> Requires Administrator privileges
+Place `WinDivert64.dll` in the same folder or `drivers/` directory.
 
 ---
 
-## 🛠 How to Build the EXE
-
-1. Install PyInstaller:
+## 🛠️ How to Run
 
 ```bash
-pip install pyinstaller
+cd src
+python firewall.py
 ```
-
-2. Run:
-
-```bash
-pyinstaller firewall.spec
-```
-
-The `.exe` will be available in the `dist/` folder.
 
 ---
 
-## 📄 License
+## 🧪 Testing
 
-MIT License © 2025 BruhhMoment123
+You can use the included `client.py` and `testserver.py` to simulate connections and see blocking in action.
+
+---
+
+## 🧾 Notes
+
+- Rules (IPs and ports) are saved to `rules.json`
+- Logs are scrollable and color-coded:
+  - 🟩 Allowed → green
+  - 🟥 Blocked → red
+- Packet capture is done using WinDivert, so **admin privileges are required** to run the app or `.exe`.
+
+---
+
+## 🔒 License
+
+This project is licensed under the MIT License.
