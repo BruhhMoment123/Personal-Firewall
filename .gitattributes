@@ -1,0 +1,10 @@
+# Ignore PyInstaller build and dist folders
+build/* linguist-vendored
+dist/* linguist-vendored
+
+# Ignore spec files (misclassified as TeX)
+*.spec linguist-generated
+
+# You can ignore DLLs, drivers too if needed
+*.dll linguist-generated
+*.sys linguist-generated
