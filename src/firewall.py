@@ -45,10 +45,33 @@ status_label.grid(row=0, column=2, padx=10)
 frame_rules = tk.Frame(root)
 frame_rules.pack(pady=5)
 
-listbox_ips = tk.Listbox(frame_rules, height=5)
-listbox_ips.grid(row=0, column=0, padx=5)
-listbox_ports = tk.Listbox(frame_rules, height=5)
-listbox_ports.grid(row=0, column=1, padx=5)
+# IP Listbox + Scrollbar
+frame_ip = tk.Frame(frame_rules)
+frame_ip.grid(row=0, column=0, padx=5)
+
+label_ip = tk.Label(frame_ip, text="Blocked IPs")
+label_ip.pack()
+
+scroll_ip = tk.Scrollbar(frame_ip)
+scroll_ip.pack(side=tk.RIGHT, fill=tk.Y)
+
+listbox_ips = tk.Listbox(frame_ip, height=4, width=30, yscrollcommand=scroll_ip.set)
+listbox_ips.pack(side=tk.LEFT, fill=tk.BOTH)
+scroll_ip.config(command=listbox_ips.yview)
+
+# Port Listbox + Scrollbar
+frame_port = tk.Frame(frame_rules)
+frame_port.grid(row=0, column=1, padx=5)
+
+label_port = tk.Label(frame_port, text="Blocked Ports")
+label_port.pack()
+
+scroll_port = tk.Scrollbar(frame_port)
+scroll_port.pack(side=tk.RIGHT, fill=tk.Y)
+
+listbox_ports = tk.Listbox(frame_port, height=4, width=30, yscrollcommand=scroll_port.set)
+listbox_ports.pack(side=tk.LEFT, fill=tk.BOTH)
+scroll_port.config(command=listbox_ports.yview)
 
 btn_add_ip = tk.Button(frame_rules, text="Add Block IP")
 btn_add_ip.grid(row=1, column=0, pady=5)
@@ -60,13 +83,20 @@ btn_remove_ip.grid(row=2, column=0, pady=5)
 btn_remove_port = tk.Button(frame_rules, text="Remove Port")
 btn_remove_port.grid(row=2, column=1, pady=5)
 
-# Packet Log Treeview
+# Packet Log Treeview with Scrollbar
+frame_log = tk.Frame(root)
+frame_log.pack(fill="both", expand=True)
+
+scroll_log = tk.Scrollbar(frame_log)
+scroll_log.pack(side=tk.RIGHT, fill=tk.Y)
+
 columns = ("Time", "Direction", "Protocol", "Src IP", "Src Port", "Dst IP", "Dst Port", "Size", "Status")
-packet_log = ttk.Treeview(root, columns=columns, show="headings", height=15)
+packet_log = ttk.Treeview(frame_log, columns=columns, show="headings", height=15, yscrollcommand=scroll_log.set)
 for col in columns:
     packet_log.heading(col, text=col)
     packet_log.column(col, width=100, anchor="center")
-packet_log.pack(fill="both", expand=True)
+packet_log.pack(fill="both", expand=True, side=tk.LEFT)
+scroll_log.config(command=packet_log.yview)
 
 # ---------------------- Logic ----------------------
 def update_lists():
@@ -97,18 +127,18 @@ def sniff_packets():
                 direction = "Outgoing" if packet.is_outbound else "Incoming"
                 protocol = str(packet.protocol)
                 src_ip, dst_ip = packet.src_addr, packet.dst_addr
-                src_port, dst_port = packet.src_port, packet.dst_port
+                src_port, dst_port = getattr(packet, "src_port", "None"), getattr(packet, "dst_port", "None")
                 size = len(packet.raw)
                 time_now = time.strftime("%H:%M:%S")
 
-                blocked = (
-                    src_ip in block_ips or
-                    dst_ip in block_ips or
-                    src_port in block_ports or
-                    dst_port in block_ports
-                )
+                block = False
 
-                if blocked:
+                if src_ip in block_ips or dst_ip in block_ips:
+                    block = True
+                if src_port in block_ports or dst_port in block_ports:
+                    block = True
+
+                if block:
                     status = "Blocked"
                     tag = "blocked"
                 else:

@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['firewall.py'],
+    ['D:/anurag/documents/firewall/src/firewall.py'],
     pathex=[],
     binaries=[],
     datas=[],
